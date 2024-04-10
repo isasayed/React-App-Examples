@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +35,146 @@
   to {
     transform: rotate(360deg);
   }
+} */
+
+@charset "UTF-8";
+body {
+  margin: 0;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background-color: #e5e5e5;
+  font-family: system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #484848;
 }
+
+.checkbox-container {
+  padding: 18px;
+  border: 1px solid #e5e5e5;
+  background-color: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 250px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.heading {
+  text-align: center;
+  margin-inline: 0;
+  margin-block: 6px;
+}
+
+.hello-message{
+  text-align: center;
+  margin-top:0px
+}
+
+.input-add-item{
+  line-height: 2em;
+  border-radius: 6px;
+  display: inline-block;
+  padding: 0.2em 1em;
+  font-size: 1em;
+  border: 1px solid #ddd; 
+  min-width: 71%;
+}
+
+.input-search-item{
+  line-height: 2em;
+  border-radius: 6px;
+  display: inline-block;
+  padding: 0.2em 1em;
+  font-size: 1em;
+  border: 1px solid #ddd; 
+  min-width: 88%;
+}
+
+.btn-add-item {
+  background: #9d9d9d;
+  color: #fefefe;
+  border: 0;
+  min-width: 9%;
+  /* pointer-events: none; */
+  font-size: 1.05em;
+  line-height: 0.5em;
+  padding: 0.7em 0.7em;
+  float: right;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-add-item.active{
+  background: #6664ff;
+  border-color: #6664ff;
+  pointer-events: visible;
+}
+
+.btn-add-item.active:hover{
+  background: #4442f6;
+  border-color: #4442f6;
+}
+
+.checkbox-group {
+  border: 1px solid #e5e5e5;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.checkbox-group.checked {
+  background-color: #0d6efd;
+  box-shadow: rgba(13, 110, 253, 0.25) 0px 8px 24px;
+}
+
+input[type=checkbox] {
+  visibility: hidden;
+  flex: 0;
+}
+
+input[type=checkbox] ~ label {
+  position: relative;
+  flex: 1;
+  cursor: pointer
+}
+
+input[type=checkbox] ~ label:before {
+  content: "";
+  position: absolute;
+  border: 1px solid #e5e5e5;
+  height: 14px;
+  font-size: 12px;
+  aspect-ratio: 1;
+  top: 0;
+  left: -26px;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+input[type=checkbox]:checked ~ label {
+  color: #ffffff;
+}
+
+input[type=checkbox]:checked ~ label:before {
+  content: "✔";
+  color: #0d6efd;
+}
+
+ul .danger-button{
+  color:red;
+}
+
+/* ul .danger-button:hover{
+  color:red;
+} */
