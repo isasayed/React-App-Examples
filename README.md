@@ -44,3 +44,13 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## How to use Json Server with this project
+command: `npx json-server -p 3500 -w data/db.json`
+
+```
+-p : port
+-w : watch
+```
+
+items route `http://localhost:3500/items`

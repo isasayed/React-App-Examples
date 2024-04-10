@@ -1,62 +1,79 @@
 import './App.css';
 import ItemData from './Models/ItemData'
 import ItemAdd from './Items/ItemAdd'
-import SearchAdd from './Items/ItemSearch'
+import ItemSearch from './Items/ItemSearch';
 import Header from './Site/Header'
 import Content from './Site/Content'
 import Footer from './Site/Footer'
-import { useState } from 'react'
-import ItemSearch from './Items/ItemSearch';
+import { apiRequest, addNewItem } from './apiRequest'
+import { useState, useEffect } from 'react'
 
 function App() {
+  const API_URL = "http://localhost:3500/items";
   const handleName = () => {
     const names = ["isa", "mohammad", "ali"]
     const position = Math.floor(Math.random() * 3);
     return names[position];
   }
 
-  const createItems = () =>{
-    const storedData = localStorage.getItem('shoppinglist');
-    const parsedData: ItemData[] = storedData ? JSON.parse(storedData) : [];
-
-    return parsedData;
-    // const itemData: ItemData[] = [
-    //   { id: 1, checked: false, name: 'Samosa' },
-    //   { id: 2, checked: false, name: 'Haleem' },
-    //   { id: 3, checked: true, name: 'Kebab' },
-    //   { id: 4, checked: false, name: 'Biryani' },
-    // ];
-    // return itemData;
-  }
-
-  const setAndSaveItems = (newItems:any) => {
-    setItems(newItems);
-    localStorage.setItem('shoppinglist', JSON.stringify(newItems));
-  }
-
+  const [fetchError, setFetchError] = useState('');
   const [name, setName] = useState(handleName());
-  const [items, setItems] = useState(createItems);
+  const [items, setItems] = useState<ItemData[]>([]);
   const [newItem, setNewItem] = useState('');
   const [searchItem, setSearchItem] = useState('');
-  
-  const addItem = (item:string) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const reponse = await fetch(API_URL);
+        if(!reponse.ok)
+          throw Error('Items API Error');
+        const storedData = await reponse.json();
+        const listItems: ItemData[] = storedData ? storedData : [];
+        setItems(listItems);
+      } catch (err:any) {
+        setFetchError(err.message);
+      } finally{
+        setIsLoading(false);
+      }
+    }
+
+    setTimeout(() => {
+      (async () => (await fetchItems()))();
+    },2000);
+  }, [])
+
+  const addItem = async (item: string) => {
     const id = items.length ? items[items.length - 1].id + 1 : 1;
-    const myNewItem : ItemData = { id:id, checked: false, name:item };
+    const myNewItem: ItemData = { id: id, checked: false, name: item };
     const listItems = [...items, myNewItem];
-    setAndSaveItems(listItems);
+    setItems(listItems);
+
+    const PostOptions = {
+      method: "POST",
+      headers: {
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify(myNewItem)
+    }
+
+    const result = await apiRequest(API_URL, PostOptions);
+    // const result = await addNewItem(API_URL, JSON.stringify(myNewItem));
+    if(result) setFetchError(result);
   }
 
   const handleCheck = (id: number) => {
-      const listItems = items.map((item) => item.id == id ? { ...item, checked: !item.checked } : item);
-      setAndSaveItems(listItems);
+    const listItems = items.map((item) => item.id == id ? { ...item, checked: !item.checked } : item);
+    setItems(listItems);
   }
 
   const handleDelete = (id: number) => {
-      const listItems = items.filter((item) => item.id != id);
-      setAndSaveItems(listItems);
+    const listItems = items.filter((item) => item.id != id);
+    setItems(listItems);
   }
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     if (!newItem) return;
     addItem(newItem);
@@ -65,23 +82,25 @@ function App() {
 
   return (
     <div className="checkbox-container">
-      <Header 
+      <Header
         title="Iftar Menu"
-        name = {name} />
-      <ItemAdd 
-          newItem = {newItem}
-          setNewItem = {setNewItem}
-          handleSubmit = {handleSubmit}/>
+        name={name} />
+      <ItemAdd
+        newItem={newItem}
+        setNewItem={setNewItem}
+        handleSubmit={handleSubmit} />
       <ItemSearch
-          searchItem = {searchItem}
-          setSearchItem = {setSearchItem} />
-      <Content 
-        items = {items.filter(item => ((item.name.toLowerCase()).includes(searchItem.toLowerCase())))}
-        handleName = {handleName}
-        handleCheck = {handleCheck}
-        handleDelete = {handleDelete} />
-      <Footer 
-        length = {items.length} />
+        searchItem={searchItem}
+        setSearchItem={setSearchItem} />
+      {isLoading && <p className='empty-error'>Loading...</p>}
+      {!fetchError && !isLoading && <Content
+        items={items.filter(item => ((item.name.toLowerCase()).includes(searchItem.toLowerCase())))}
+        handleName={handleName}
+        handleCheck={handleCheck}
+        handleDelete={handleDelete} />}
+      <Footer
+        length={items.length}
+        fetchError = {fetchError} />
     </div>
   );
 }

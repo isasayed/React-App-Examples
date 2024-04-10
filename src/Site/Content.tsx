@@ -12,9 +12,8 @@ const Content = (props:any) => {
                 )
                 :
                 (
-                    <p>Empty Menu</p>
+                    <p className='empty-error'>Empty Menu</p>
                 )
-
             }
             
         </main>

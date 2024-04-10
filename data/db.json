@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "id": "1",
+      "checked": false,
+      "name": "Nihari"
+    },
+    {
+      "id": "2",
+      "checked": false,
+      "name": "Tikka"
+    },
+    {
+      "id": "3",
+      "checked": false,
+      "name": "Biryani"
+    },
+    {
+      "id": "4",
+      "checked": false,
+      "name": "Rabdi"
+    },
+    {
+      "id": "41",
+      "checked": false,
+      "name": "Tikka Masala"
+    }
+  ]
+}
