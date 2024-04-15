@@ -5,7 +5,7 @@ import ItemSearch from './Items/ItemSearch';
 import Header from './Site/Header'
 import Content from './Site/Content'
 import Footer from './Site/Footer'
-import { apiRequest, addNewItem } from './apiRequest'
+import { addNewItem, updateItem, deleteItem } from './apiRequest'
 import { useState, useEffect } from 'react'
 
 function App() {
@@ -50,27 +50,25 @@ function App() {
     const listItems = [...items, myNewItem];
     setItems(listItems);
 
-    const PostOptions = {
-      method: "POST",
-      headers: {
-        'Content-Type': "application/json"
-      },
-      body: JSON.stringify(myNewItem)
-    }
-
-    const result = await apiRequest(API_URL, PostOptions);
-    // const result = await addNewItem(API_URL, JSON.stringify(myNewItem));
+    const result = await addNewItem(API_URL, myNewItem);
     if(result) setFetchError(result);
   }
 
-  const handleCheck = (id: number) => {
+  const handleCheck = async (id: number) => {
     const listItems = items.map((item) => item.id == id ? { ...item, checked: !item.checked } : item);
     setItems(listItems);
+
+    const listItem = listItems.filter((item) => item.id == id);
+    const result = await updateItem(`${API_URL}/${id}`, {checked:listItem[0].checked});
+    if(result) setFetchError(result);
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     const listItems = items.filter((item) => item.id != id);
     setItems(listItems);
+
+    const result = await deleteItem(`${API_URL}/${id}`);
+    if(result) setFetchError(result);
   }
 
   const handleSubmit = (e: any) => {

@@ -19,3 +19,21 @@ export const addNewItem = async (API_URL: string, body: any) => {
     }
     return await apiRequest(API_URL, PostOptions);
 }
+
+export const updateItem = async (API_URL: string, body: any) => {
+    const PostOptions = {
+        method: "PATCH",
+        headers: {
+            'Content-Type': "application/json"
+        },
+        body: JSON.stringify(body)
+    }
+    return await apiRequest(API_URL, PostOptions);
+}
+
+export const deleteItem = async (API_URL: string) => {
+    const PostOptions = {
+        method: "DELETE"
+    }
+    return await apiRequest(API_URL, PostOptions);
+}
