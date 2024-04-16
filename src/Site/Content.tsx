@@ -1,11 +1,13 @@
 import React from 'react'
+import Table from '../HtmlComponent/Table'
 
-const Content = () => {
-  return (
-    <main>
-      
-    </main>
-  )
+const Content = (props: any) => {
+    return (
+        <main>
+            <Table
+                items={props.items} />
+        </main>
+    )
 }
 
 export default Content
