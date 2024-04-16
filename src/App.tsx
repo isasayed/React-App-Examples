@@ -10,14 +10,15 @@ import { useState, useEffect } from 'react'
 
 function App() {
   const API_URL = "http://localhost:3500/items";
+  
   const handleName = () => {
     const names = ["isa", "mohammad", "ali"]
     const position = Math.floor(Math.random() * 3);
     return names[position];
   }
+  const name = handleName();
 
   const [fetchError, setFetchError] = useState('');
-  const [name, setName] = useState(handleName());
   const [items, setItems] = useState<ItemData[]>([]);
   const [newItem, setNewItem] = useState('');
   const [searchItem, setSearchItem] = useState('');
@@ -41,7 +42,7 @@ function App() {
 
     setTimeout(() => {
       (async () => (await fetchItems()))();
-    },2000);
+    },1000);
   }, [])
 
   const addItem = async (item: string) => {
