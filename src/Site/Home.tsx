@@ -1,9 +1,17 @@
-import React from 'react'
+import Feed from '../Component/Feed'
 
-const Home = () => {
+const Home = (props:any) => {
   return (
-    <main>
-      <h2>Home</h2>
+    <main className='Home'>
+      {
+        props.posts.length ? (
+          <Feed 
+            posts = {props.posts} />
+        ) :
+        (
+         <p> no posts available </p> 
+        )
+      }
     </main>
   )
 }

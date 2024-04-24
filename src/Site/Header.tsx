@@ -2,7 +2,7 @@ import React from 'react'
 
 const Header = (props:any) => {
   return (
-    <header>
+    <header className='Header'>
       <h2>{props.title}</h2>
     </header>
   )
