@@ -1,9 +1,8 @@
-import React from 'react'
-
 const About = () => {
   return (
-    <main>
-      <h2>About</h2>
+    <main className='About'>
+      <h2>About React Blog App</h2>
+      <p style={{ marginTop: '1rem' }}>Blog app developed in React with typescript</p>
     </main>
   )
 }

@@ -5,7 +5,7 @@ const Home = (props:any) => {
     <main className='Home'>
       {
         props.posts.length ? (
-          <Feed 
+          <Feed
             posts = {props.posts} />
         ) :
         (

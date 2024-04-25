@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 
-const Nav = (props:any) => {
+const Nav = (props: any) => {
   return (
     <nav className="Nav">
-      <form className='searchForm' onSubmit={(e)=>e.preventDefault()}>
+      <form className='searchForm' onSubmit={(e) => e.preventDefault()}>
         <label htmlFor='search'>search blog</label>
-        <input 
+        <input
           id='search'
           type="text"
           placeholder='Search Blog'

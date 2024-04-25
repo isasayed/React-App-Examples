@@ -7,13 +7,13 @@ import PostDetail from './Post/PostDetail'
 import About from './Site/About'
 import Missing from './Site/Missing'
 import Footer from './Site/Footer'
-import PostData from './Model/PostData' 
+import PostData from './Model/PostData'
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom'
 import { format } from 'date-fns'
 import './App.css';
 
 function App() {
-  const createItems = () =>{
+  const createItems = () => {
     const itemData: PostData[] = [
       {
         id: 1,
@@ -44,64 +44,59 @@ function App() {
   }
 
   const [posts, setPosts] = useState(createItems());
-  const [newPostTitle, setNewPostTitle] = useState('');
-  const [newPostBody, setNewPostBody] = useState('');
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<PostData[]>([]);
   const navigate = useNavigate();
 
   const handleSearch = () => {
     var filteredItems: PostData[] = posts.filter(item => ((item.title.toLowerCase()).includes(search.toLowerCase())))
-    setSearchResults(filteredItems)
+    setSearchResults(filteredItems.reverse())
   }
 
-  const handleDelete = (id:number) => {
+  const handleDelete = (id: number) => {
     var filteredItems: PostData[] = posts.filter(item => ((item.id != id)))
     setPosts(filteredItems)
     navigate('/');
   }
 
-  const handleNewPost = (e:any) => {
+  const handleNewPost = (e: any) => {
     e.preventDefault();
+    let form = new FormData(e.target);
+    var formObj = Object.fromEntries(form.entries());
+
     const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
-    const myNewItem: PostData = { id: id, datetime: format(new Date(), 'MMMM dd, yyyy pp'), title: newPostTitle, body: newPostBody };
-    const listItems = [...posts, myNewItem];
-    setPosts(listItems);
-    setNewPostTitle('');
-    setNewPostBody('');
+    const myNewItem: PostData = { id: id, datetime: format(new Date(), 'MMMM dd, yyyy pp'), title: formObj.title.toString(), body: formObj.body.toString() };
+    const postItems = [...posts, myNewItem];
+    setPosts(postItems);
     navigate('/');
   }
 
-  useEffect(() =>{
+  useEffect(() => {
     handleSearch();
   }, [search, posts])
 
   return (
     <div className="App">
-        <Header
-          title='React Blog App' />
-        <Nav 
-          search = {search}
-          setSearch = {setSearch} />
-        <Routes>
-          <Route path='/' 
-                element={<Home 
-                          posts = {searchResults} />} />
-          <Route path='/post' 
-                element={<NewPost 
-                          handleNewPost={handleNewPost}
-                          newPostTitle = {newPostTitle}
-                          setNewPostTitle = {setNewPostTitle}
-                          newPostBody = {newPostBody}
-                          setNewPostBody = {setNewPostBody} />} />
-          <Route path='/post/:id' 
-                element={<PostDetail 
-                          posts = {posts}
-                          handleDelete = {handleDelete} />} />
-          <Route path='/about' element={<About />} />
-          <Route path='*' element={<Missing />} />
-        </Routes>
-        <Footer />
+      <Header
+        title='React Blog App' />
+      <Nav
+        search={search}
+        setSearch={setSearch} />
+      <Routes>
+        <Route path='/'
+          element={<Home
+            posts={searchResults} />} />
+        <Route path='/post'
+          element={<NewPost
+            handleNewPost={handleNewPost} />} />
+        <Route path='/post/:id'
+          element={<PostDetail
+            posts={posts}
+            handleDelete={handleDelete} />} />
+        <Route path='/about' element={<About />} />
+        <Route path='*' element={<Missing />} />
+      </Routes>
+      <Footer />
     </div>
   );
 }

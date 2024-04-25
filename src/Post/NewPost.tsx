@@ -1,6 +1,4 @@
-import PostData from '../Model/PostData'
-
-const NewPost = ({ newPostTitle, setNewPostTitle, newPostBody, setNewPostBody, handleNewPost }: NewPostProps) => {
+const NewPost = ({ handleNewPost }: NewPostProps) => {
   return (
     <div className="NewPost">
       <h2>New Post</h2>
@@ -8,20 +6,18 @@ const NewPost = ({ newPostTitle, setNewPostTitle, newPostBody, setNewPostBody, h
         <label htmlFor="title">Title</label>
         <input
           id="title"
+          name="title"
           type="text"
-          required
-          value = {newPostTitle}
-          onChange = {(e) => setNewPostTitle(e.target.value)} />
+          required />
         <label htmlFor="body">Body</label>
         <textarea
           id="body"
-          required
-          value = {newPostBody}
-          onChange = {(e) => setNewPostBody(e.target.value)} />
-          <button 
-            type = "submit">
-            Add Post
-          </button>
+          name="body"
+          required />
+        <button
+          type="submit">
+          Add Post
+        </button>
       </form>
     </div>
   )
@@ -29,10 +25,6 @@ const NewPost = ({ newPostTitle, setNewPostTitle, newPostBody, setNewPostBody, h
 
 interface NewPostProps {
   handleNewPost: any;
-  newPostTitle: string;
-  setNewPostTitle: any;
-  newPostBody: string;
-  setNewPostBody: any;
 }
 
 export default NewPost
