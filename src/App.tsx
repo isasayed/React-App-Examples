@@ -42,34 +42,34 @@ function App() {
 
     setTimeout(() => {
       (async () => (await fetchItems()))();
-    },1000);
+    },500);
   }, [])
 
   const addItem = async (item: string) => {
     const id = items.length ? items[items.length - 1].id + 1 : 1;
     const myNewItem: ItemData = { id: id, checked: false, name: item };
     const listItems = [...items, myNewItem];
-    setItems(listItems);
-
+    
     const result = await addNewItem(API_URL, myNewItem);
     if(result) setFetchError(result);
+    else setItems(listItems);
   }
 
   const handleCheck = async (id: number) => {
     const listItems = items.map((item) => item.id == id ? { ...item, checked: !item.checked } : item);
-    setItems(listItems);
 
     const listItem = listItems.filter((item) => item.id == id);
     const result = await updateItem(`${API_URL}/${id}`, {checked:listItem[0].checked});
     if(result) setFetchError(result);
+    else setItems(listItems);
   }
 
   const handleDelete = async (id: number) => {
     const listItems = items.filter((item) => item.id != id);
-    setItems(listItems);
 
     const result = await deleteItem(`${API_URL}/${id}`);
     if(result) setFetchError(result);
+    else setItems(listItems);
   }
 
   const handleSubmit = (e: any) => {
