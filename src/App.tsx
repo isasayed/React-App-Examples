@@ -82,7 +82,7 @@ function App() {
   return (
     <div className="checkbox-container">
       <Header
-        title="Iftar Menu"
+        title="Grocery List"
         name={name} />
       <ItemAdd
         newItem={newItem}

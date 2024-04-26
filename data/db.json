@@ -3,27 +3,27 @@
     {
       "id": "1",
       "checked": false,
-      "name": "Nihari"
+      "name": "Cabage"
     },
     {
       "id": "2",
       "checked": false,
-      "name": "Tikka"
+      "name": "Carrot"
     },
     {
       "id": "3",
       "checked": false,
-      "name": "Biryani"
+      "name": "Onion"
     },
     {
       "id": "4",
       "checked": false,
-      "name": "Rabdi"
+      "name": "Potato"
     },
     {
       "id": "41",
       "checked": false,
-      "name": "Tikka Masala"
+      "name": "Sweet Potato"
     }
   ]
 }
