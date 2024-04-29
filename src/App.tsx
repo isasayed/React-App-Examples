@@ -16,10 +16,10 @@ function App() {
     const position = Math.floor(Math.random() * 3);
     return names[position];
   }
-  const name = handleName();
 
   const [fetchError, setFetchError] = useState('');
   const [items, setItems] = useState<ItemData[]>([]);
+  const [name, setName] = useState(handleName());
   const [newItem, setNewItem] = useState('');
   const [searchItem, setSearchItem] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +94,6 @@ function App() {
       {isLoading && <p className='empty-error'>Loading...</p>}
       {!fetchError && !isLoading && <Content
         items={items.filter(item => ((item.name.toLowerCase()).includes(searchItem.toLowerCase())))}
-        handleName={handleName}
         handleCheck={handleCheck}
         handleDelete={handleDelete} />}
       <Footer
