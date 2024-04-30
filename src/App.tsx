@@ -7,6 +7,7 @@ import Content from './Site/Content'
 import Footer from './Site/Footer'
 import { addNewItem, updateItem, deleteItem } from './apiRequest'
 import { useState, useEffect } from 'react'
+import LoadingBar from 'react-top-loading-bar'
 
 function App() {
   const API_URL = "http://localhost:3500/items";
@@ -17,6 +18,7 @@ function App() {
     return names[position];
   }
 
+  const [progress, setProgress] = useState(10)
   const [fetchError, setFetchError] = useState('');
   const [items, setItems] = useState<ItemData[]>([]);
   const [name, setName] = useState(handleName());
@@ -37,39 +39,46 @@ function App() {
         setFetchError(err.message);
       } finally{
         setIsLoading(false);
+        setProgress(100);
       }
     }
 
     setTimeout(() => {
       (async () => (await fetchItems()))();
-    },500);
+    },2000);
   }, [])
 
   const addItem = async (item: string) => {
+    setProgress(10);
     const id = items.length ? items[items.length - 1].id + 1 : 1;
     const myNewItem: ItemData = { id: id, checked: false, name: item };
     const listItems = [...items, myNewItem];
     
     const result = await addNewItem(API_URL, myNewItem);
-    if(result) setFetchError(result);
-    else setItems(listItems);
+    handleListItemResult(result, listItems);
   }
 
   const handleCheck = async (id: number) => {
+    setProgress(10);
     const listItems = items.map((item) => item.id == id ? { ...item, checked: !item.checked } : item);
 
     const listItem = listItems.filter((item) => item.id == id);
     const result = await updateItem(`${API_URL}/${id}`, {checked:listItem[0].checked});
-    if(result) setFetchError(result);
-    else setItems(listItems);
+    handleListItemResult(result, listItems);
   }
 
   const handleDelete = async (id: number) => {
+    setProgress(10);
     const listItems = items.filter((item) => item.id != id);
 
     const result = await deleteItem(`${API_URL}/${id}`);
+    handleListItemResult(result, listItems);
+  }
+  
+  const handleListItemResult = (result: any, listItems:any) => {
     if(result) setFetchError(result);
     else setItems(listItems);
+    setProgress(100);
   }
 
   const handleSubmit = (e: any) => {
@@ -81,6 +90,7 @@ function App() {
 
   return (
     <div className="checkbox-container">
+      <LoadingBar color="#f11946" progress={progress} onLoaderFinished={() => setProgress(0)} />
       <Header
         title="Grocery List"
         name={name} />
