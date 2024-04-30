@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import LoadingBar from 'react-top-loading-bar'
 import Header from './Site/Header'
 import Nav from './Site/Nav'
 import Home from './Site/Home'
 import NewPost from './Post/NewPost'
+import EditPost from './Post/EditPost'
 import PostDetail from './Post/PostDetail'
 import About from './Site/About'
 import Missing from './Site/Missing'
@@ -10,40 +12,14 @@ import Footer from './Site/Footer'
 import PostData from './Model/PostData'
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom'
 import { format } from 'date-fns'
+import api from './Api/posts'
 import './App.css';
 
 function App() {
-  const createItems = () => {
-    const itemData: PostData[] = [
-      {
-        id: 1,
-        title: "My First Post",
-        datetime: "July 01, 2021 11:17:36 AM",
-        body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-      },
-      {
-        id: 2,
-        title: "My 2nd Post",
-        datetime: "July 01, 2021 11:17:36 AM",
-        body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-      },
-      {
-        id: 3,
-        title: "My 3rd Post",
-        datetime: "July 01, 2021 11:17:36 AM",
-        body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-      },
-      {
-        id: 4,
-        title: "My Fourth Post",
-        datetime: "July 01, 2021 11:17:36 AM",
-        body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-      }
-    ];
-    return itemData;
-  }
-
-  const [posts, setPosts] = useState(createItems());
+  const [progress, setProgress] = useState(20)
+  const [posts, setPosts] = useState<PostData[]>([]);
+  const [editPostTitle, setEditPostTitle] = useState('');
+  const [editPostBody, setEditPostBody] = useState('');
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<PostData[]>([]);
   const navigate = useNavigate();
@@ -53,35 +29,74 @@ function App() {
     setSearchResults(filteredItems.reverse())
   }
 
-  const handleDelete = (id: number) => {
-    var filteredItems: PostData[] = posts.filter(item => ((item.id != id)))
-    setPosts(filteredItems)
-    navigate('/');
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await api.delete(`/posts/${id}`);
+      var filteredItems: PostData[] = posts.filter(item => ((item.id != id)))
+      setPosts(filteredItems)
+      navigate('/');
+    } catch (err: any) {
+      console.log(err.message);
+    }
   }
 
-  const handleNewPost = (e: any) => {
+  const handleNewPost = async (e: any) => {
     e.preventDefault();
     let form = new FormData(e.target);
     var formObj = Object.fromEntries(form.entries());
 
-    const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
-    const myNewItem: PostData = { id: id, datetime: format(new Date(), 'MMMM dd, yyyy pp'), title: formObj.title.toString(), body: formObj.body.toString() };
-    const postItems = [...posts, myNewItem];
-    setPosts(postItems);
-    navigate('/');
+    try {
+      const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
+      const myNewPost: PostData = { id: id, datetime: format(new Date(), 'MMMM dd, yyyy pp'), title: formObj.title.toString(), body: formObj.body.toString() };
+      const response = await api.post('/posts', myNewPost);
+      const postItems = [...posts, response.data];
+      setPosts(postItems);
+      navigate('/');
+    } catch (err: any) {
+      console.log(err.message);
+    }
+  }
+
+  const handleEditPost = async (id: number) => {
+    try {
+      const updatedPostItem: PostData = { id: id, datetime: format(new Date(), 'MMMM dd, yyyy pp'), title: editPostTitle, body: editPostBody };
+      const response = await api.patch(`/posts/${id}`, updatedPostItem);
+      setPosts(posts.map((post) => post.id == id ? { ...updatedPostItem } : post));
+      navigate('/');
+    } catch (err: any) {
+      console.log(err.message);
+    }
   }
 
   useEffect(() => {
     handleSearch();
   }, [search, posts])
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await api.get('/posts')
+        setPosts(response.data);
+        setProgress(100);
+      } catch (err: any) {
+        console.log(err.message);
+      }
+    }
+
+    setTimeout(() => {
+      fetchPosts();
+    }, 1000)
+  }, [])
+
   return (
     <div className="App">
+      <LoadingBar color="#f11946" progress={progress} onLoaderFinished={() => setProgress(0)} />
       <Header
         title='React Blog App' />
       <Nav
         search={search}
         setSearch={setSearch} />
+      { progress==100 || progress==0 ? ( 
       <Routes>
         <Route path='/'
           element={<Home
@@ -93,9 +108,20 @@ function App() {
           element={<PostDetail
             posts={posts}
             handleDelete={handleDelete} />} />
+        <Route path='/editpost/:id'
+          element={<EditPost
+            posts={posts}
+            editPostTitle={editPostTitle}
+            setEditPostTitle={setEditPostTitle}
+            editPostBody={editPostBody}
+            setEditPostBody={setEditPostBody}
+            handleEditPost={handleEditPost} />} />
         <Route path='/about' element={<About />} />
         <Route path='*' element={<Missing />} />
       </Routes>
+      ) :
+      ( <div className='Home'></div> )
+      }
       <Footer />
     </div>
   );

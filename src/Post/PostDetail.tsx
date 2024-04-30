@@ -14,7 +14,12 @@ const PostDetail = ({ posts, handleDelete }: PostDetailProps) => {
             <h2>{post.title}</h2>
             <p className='postDate'>{post.datetime}</p>
             <p className='postBody'>{post.body}</p>
-            <button
+            <Link className='button' to={`/editpost/${post.id}`}>
+              <button className='editButton'>
+                Edit post
+              </button>
+            </Link>
+            <button style={{marginLeft:'10px'}}
               onClick={() => handleDelete(post.id)}>
               Delete post
             </button>
