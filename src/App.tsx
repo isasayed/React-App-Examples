@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import LoadingBar from 'react-top-loading-bar'
+import { Route, Routes, useNavigate } from 'react-router-dom'
+import { format } from 'date-fns'
 import Header from './Site/Header'
 import Nav from './Site/Nav'
 import Home from './Site/Home'
@@ -10,9 +12,9 @@ import About from './Site/About'
 import Missing from './Site/Missing'
 import Footer from './Site/Footer'
 import PostData from './Model/PostData'
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom'
-import { format } from 'date-fns'
 import api from './Api/posts'
+import useWindow from './Hooks/useWindow';
+import useAxiosFetch from './Hooks/useAxiosFetch';
 import './App.css';
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
   const [editPostBody, setEditPostBody] = useState('');
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<PostData[]>([]);
+  const { width } = useWindow();
+  const { data, fetchError, isLoading } = useAxiosFetch('http://localhost:3500/posts');
   const navigate = useNavigate();
 
   const handleSearch = () => {
@@ -73,26 +77,16 @@ function App() {
   }, [search, posts])
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await api.get('/posts')
-        setPosts(response.data);
-        setProgress(100);
-      } catch (err: any) {
-        console.log(err.message);
-      }
-    }
-
-    setTimeout(() => {
-      fetchPosts();
-    }, 1000)
-  }, [])
+    setPosts(data);
+    setProgress(100)
+  }, [data])
 
   return (
     <div className="App">
       <LoadingBar color="#f11946" progress={progress} onLoaderFinished={() => setProgress(0)} />
       <Header
-        title='React Blog App' />
+        title='React Blog App'
+        width={width} />
       <Nav
         search={search}
         setSearch={setSearch} />
@@ -100,7 +94,9 @@ function App() {
       <Routes>
         <Route path='/'
           element={<Home
-            posts={searchResults} />} />
+            posts={searchResults}
+            fetchError={fetchError}
+            isLoading={isLoading} />} />
         <Route path='/post'
           element={<NewPost
             handleNewPost={handleNewPost} />} />
